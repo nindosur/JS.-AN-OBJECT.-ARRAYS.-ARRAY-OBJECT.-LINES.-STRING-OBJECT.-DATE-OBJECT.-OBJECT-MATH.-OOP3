@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+
+</head>
+<body>
+
+<script>
+//1
+class PrintMachine {
+  constructor(fontSize, fontColor, fontFamily) {
+    this.fontSize = fontSize;
+    this.fontColor = fontColor;
+    this.fontFamily = fontFamily;
+    this.container = document.createElement("div");
+  }
+
+  print(text) {
+    const paragraph = document.createElement("p");
+    paragraph.style.fontSize = this.fontSize + 'px';
+    paragraph.style.color = this.fontColor;
+    paragraph.style.fontFamily = this.fontFamily;
+    paragraph.textContent = text;
+    this.container.appendChild(paragraph);
+}
+
+  render() {
+  document.body.appendChild(this.container);
+  }
+}
+
+const printMachine = new PrintMachine(20, "red", "Arial");
+printMachine.print("Hello World!!");
+printMachine.render();
+
+
+//2
+class News {
+  constructor(title, text, tags, date) {
+    this.title = title;
+    this.text = text;
+    this.tags = tags;
+    this.date = new Date(date);
+  }
+
+  getFormattedDate() {
+    const currentDate = new Date();
+    const timeDiff = Math.abs(currentDate.getTime() - this.date.getTime());
+    const diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+
+    if (diffDays === 0) {
+      return "сегодня";
+    } else if (diffDays < 7) {
+      return diffDays + " " + this.getPluralized("день", diffDays) + " назад";
+    } else {
+      const day = this.date.getDate();
+      const month = this.date.getMonth() + 1;
+      const year = this.date.getFullYear();
+      return (day < 10 ? "0" : "") + day + "." + (month < 10 ? "0" : "") + month + "." + year;
+    }
+  }
+
+  getPluralized(word, number) {
+    const lastDigit = number % 10;
+    const lastTwoDigits = number % 100;
+
+    if (lastTwoDigits >= 11 && lastTwoDigits <= 19) {
+      return word + "ей";
+    }
+
+    if (lastDigit === 1) {
+      return word;
+    } else if (lastDigit >= 2 && lastDigit <= 4) {
+      return word + "а";
+    } else {
+      return word + "ов";
+    }
+  }
+
+  print() {
+    document.write('<h2>'+'<b>'+ this.title + '</b>' + '</h2>' +'<br>');
+    document.write('<p style="font-size:13px;">'+ this.getFormattedDate() + '</p>' + '<br>');
+    document.write(this.text + '<br>' + '<br>');
+    document.write(this.tags.join(", "));
+  }
+}
+
+const news = new News(
+  "Lorem ipsum dolor sit amet",
+  "Etiam ornare urna vel nisi viverra, eget sagittis mi fringilla. <br>Curabitur semper luctus urna, at fringilla ante aliquet a. Nunc cursus orci justo, scelerisque mattis quam fringilla nec. <br>Vivamus vel massa ligula. Mauris non elit tincidunt,<br> finibus lectus ut, varius enim. Donec tincidunt interdum accumsan.<br> Praesent ac sapien maximus, consectetur elit non, porta felis.<br> Ut sodales nulla sit amet turpis consequat suscipit.",
+  ["#тег1", "#тег2", "#тег3"],
+  "2023-06-28"
+);
+
+news.print();
+
+
+//3
+class NewsFeed {
+  constructor() {
+    this.news = [];
+  }
+
+  get count() {
+    return this.news.length;
+  }
+
+  displayNews() {
+    console.log("Новости:");
+    this.news.forEach((item) => {
+      console.log(`- ${item.title}`);
+    });
+  }
+
+  addNews(title, date, tags) {
+    const newNews = {
+      title: title,
+      date: date,
+      tags: tags
+    };
+    this.news.push(newNews);
+    console.log(`Добавлена новость: ${title}`);
+  }
+
+  removeNews(title) {
+    const index = this.news.findIndex((item) => item.title === title);
+    if (index === -1) {
+      console.log(`Новость "${title}" не найдена`);
+    } else {
+      this.news.splice(index, 1);
+      console.log(`Новость "${title}" удалена`);
+    }
+  }
+
+  sortByDate() {
+    this.news.sort((a, b) => new Date(b.date) - new Date(a.date));
+    console.log("Новости отсортированы по дате");
+  }
+
+  searchNewsByTag(tag) {
+    const result = this.news.filter((item) => item.tags.includes(tag));
+    console.log(`Найдено ${result.length} новостей с тегом "${tag}"`);
+    result.forEach((item) => {
+      console.log(`- ${item.title}`);
+    });
+  }
+}
+
+
+const newsFeed = new NewsFeed();
+
+console.log(`Количество новостей: ${newsFeed.count}`);
+newsFeed.addNews("Заголовок 1", "2021-01-01", ["тег1", "тег2"]);
+newsFeed.addNews("Заголовок 2", "2021-02-02", ["тег2", "тег3"]);
+newsFeed.addNews("Заголовок 3", "2021-03-03", ["тег3", "тег4"]);
+
+console.log(`Количество новостей: ${newsFeed.count}`);
+newsFeed.displayNews();
+
+newsFeed.sortByDate();
+newsFeed.displayNews();
+
+newsFeed.removeNews("Заголовок 2");
+newsFeed.displayNews();
+
+newsFeed.searchNewsByTag("тег3");
+
+</script>
+</body>
+</html>
